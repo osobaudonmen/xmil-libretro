@@ -39,6 +39,14 @@ include:
   - project: 'libretro-infrastructure/ci-templates'
     file: '/osx-arm64.yml'
 
+  # MacOS PPC
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/osx-ppc.yml'
+
+  # DJGPP
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/djgpp-static.yml'
+
   ################################## CELLULAR ################################
   # Android
   - project: 'libretro-infrastructure/ci-templates'
@@ -56,7 +64,11 @@ include:
   # PlayStation Portable
   - project: 'libretro-infrastructure/ci-templates'
     file: '/psp-static.yml'
-    
+
+  # PlayStation2
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/ps2-static.yml'
+
   # PlayStation Vita
   - project: 'libretro-infrastructure/ci-templates'
     file: '/vita-static.yml'
@@ -84,6 +96,14 @@ include:
   # tvOS (AppleTV)
   - project: 'libretro-infrastructure/ci-templates'
     file: '/tvos-arm64.yml'
+
+  # OpenDingux
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/dingux-mips32.yml'
+
+  # OpenDingux
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/dingux-arm32.yml'
 
   #################################### MISC ##################################
   # Emscripten
@@ -137,6 +157,18 @@ libretro-build-osx-arm64:
     - .libretro-osx-arm64-make-default
     - .core-defs
 
+# DJGPP
+libretro-build-djgpp-i586:
+  extends:
+    - .libretro-djgpp-static-retroarch-master
+    - .core-defs
+
+# MacOS PPC
+libretro-build-osx-ppc:
+  extends:
+    - .libretro-osx-ppc-make-default
+    - .core-defs
+
 ################################### CELLULAR #################################
 # Android ARMv7a
 android-armeabi-v7a:
@@ -187,6 +219,12 @@ libretro-build-psp:
     - .libretro-psp-static-retroarch-master
     - .core-defs
 
+# PlayStation2
+libretro-build-ps2:
+  extends:
+    - .libretro-ps2-static-retroarch-master
+    - .core-defs
+
 # PlayStation Vita
 libretro-build-vita:
   extends:
@@ -222,11 +260,35 @@ libretro-build-libnx-aarch64:
   extends:
     - .libretro-libnx-static-retroarch-master
     - .core-defs
-#################################### MISC ##################################
-# Emscripten
-libretro-build-emscripten:
+
+# OpenDingux
+libretro-build-dingux-mips32:
   extends:
-    - .libretro-emscripten-static-retroarch-master
+    - .libretro-dingux-mips32-make-default
+    - .core-defs
+
+# OpenDingux Beta
+libretro-build-dingux-odbeta-mips32:
+  extends:
+    - .libretro-dingux-odbeta-mips32-make-default
+    - .core-defs
+
+# OpenDingux Beta
+libretro-build-rs90-odbeta-mips32:
+  extends:
+    - .libretro-rs90-odbeta-mips32-make-default
+    - .core-defs
+
+# OpenDingux
+libretro-build-dingux-arm32:
+  extends:
+    - .libretro-miyoo-arm32-make-default
+    - .core-defs
+
+# RetroFW
+libretro-build-retrofw-mips32:
+  extends:
+    - .libretro-retrofw-mips32-make-default
     - .core-defs
    
 #################################### MISC ##################################
