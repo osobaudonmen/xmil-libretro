@@ -31,6 +31,7 @@
 #include "joymng.h"
 #include "sdlkbd.h"
 #include "fddfile.h"
+#include "z80core.h"
 
 #ifdef _WIN32
 char slash = '\\';
@@ -481,12 +482,24 @@ unsigned retro_api_version(void)
 
 void *retro_get_memory_data(unsigned id)
 {
-    return NULL;
+    switch (id)
+    {
+    case RETRO_MEMORY_SYSTEM_RAM:
+	return mainmem;
+    default:
+	return NULL;
+    }
 }
 
 size_t retro_get_memory_size(unsigned id)
 {
-    return 0;
+    switch (id)
+    {
+    case RETRO_MEMORY_SYSTEM_RAM:
+	return sizeof(mainmem);
+    default:
+	return 0;
+    }
 }
 
 bool set_eject_state(bool ejected) {
