@@ -487,8 +487,10 @@ void *retro_get_memory_data(unsigned id)
     case RETRO_MEMORY_SYSTEM_RAM:
 	return mainmem;
     default:
-	return NULL;
+	break;
     }
+
+    return NULL;
 }
 
 size_t retro_get_memory_size(unsigned id)
@@ -498,8 +500,10 @@ size_t retro_get_memory_size(unsigned id)
     case RETRO_MEMORY_SYSTEM_RAM:
 	return sizeof(mainmem);
     default:
-	return 0;
+	break;
     }
+
+    return 0;
 }
 
 bool set_eject_state(bool ejected) {
