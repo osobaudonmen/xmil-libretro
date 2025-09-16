@@ -13,7 +13,8 @@ INCFLAGS := -I$(CORE_DIR) \
 	-I$(XMIL_PATH)/sound \
 	-I$(XMIL_PATH)/vram \
 	-I$(XMIL_PATH)/z80c \
-	-I$(XMIL_PATH)/libretro/include
+	-I$(XMIL_PATH)/libretro/include \
+	-I$(XMIL_PATH)/libretro-common/include
 
 SOURCES_C :=  \
 		$(wildcard $(XMIL_PATH)/*.c) \
@@ -25,6 +26,9 @@ SOURCES_C :=  \
 		$(wildcard $(XMIL_PATH)/io/*.c) \
 		$(wildcard $(XMIL_PATH)/libretro/*.c) \
 		$(wildcard $(XMIL_PATH)/sound/*.c) \
+		$(XMIL_PATH)/libretro-common/compat/compat_strl.c \
+		$(XMIL_PATH)/libretro-common/compat/fopen_utf8.c \
+		$(XMIL_PATH)/libretro-common/encodings/encoding_utf.c \
 		$(XMIL_PATH)/vram/make15.c \
 		$(XMIL_PATH)/vram/make24.c \
 		$(XMIL_PATH)/vram/makeatr.c \

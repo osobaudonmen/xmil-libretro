@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdarg.h>
+#include <compat/fopen_utf8.h>
 
 #include "libretro.h"
 
@@ -432,6 +433,91 @@ void retro_cheat_set(unsigned index, bool enabled, const char *code)
     (void)code;
 }
 
+static void extract_directory(char *buf, const char *path, size_t size)
+{
+   char *base = NULL;
+
+   strncpy(buf, path, size - 1);
+   buf[size - 1] = '\0';
+
+   base = strrchr(buf, '/');
+   if (!base)
+      base = strrchr(buf, '\\');
+
+   if (base)
+      *base = '\0';
+   else
+      buf[0] = '\0';
+}
+
+static bool is_path_absolute(const char* path)
+{
+   if (path[0] == slash)
+      return true;
+
+#ifdef _WIN32
+   if ((path[0] >= 'a' && path[0] <= 'z') ||
+      (path[0]  >= 'A' && path[0] <= 'Z'))
+   {
+      if (path[1] == ':')
+         return true;
+   }
+#endif
+   return false;
+}
+
+static bool read_m3u(const char *file)
+{
+   unsigned index = 0;
+   char line[MAX_PATH];
+   char name[MAX_PATH];
+   char base_dir[MAX_PATH];
+   FILE *f = fopen_utf8(file, "r");
+
+   if (!f)
+      return false;
+
+   log_printf("READ M3U: %s", file);
+   extract_directory(base_dir, file, sizeof(base_dir));
+
+   while (fgets(line, sizeof(line), f))
+   {
+      if (line[0] == '#')
+         continue;
+
+      char *carriage_return = strchr(line, '\r');
+      if (carriage_return)
+         *carriage_return = '\0';
+
+      char *newline = strchr(line, '\n');
+      if (newline)
+         *newline = '\0';
+
+      if (line[0] != '\0')
+      {
+         char image_label[4096];
+         char *custom_label;
+         size_t len = 0;
+
+         if (is_path_absolute(line))
+            strncpy(name, line, sizeof(name));
+         else
+            snprintf(name, sizeof(name), "%s%c%s", base_dir, slash, line);
+
+         log_printf("LOAD DISK: %s", name);
+         images[index] = strdup(name);
+         index++;
+      }
+   }
+
+   cur_disk_idx = 0;
+   cur_disk_num = index;
+
+   fclose(f);
+
+   return (cur_disk_num != 0);
+}
+
 bool retro_load_game(const struct retro_game_info *info)
 {
    const char *full_path;
@@ -444,13 +530,16 @@ bool retro_load_game(const struct retro_game_info *info)
 	   return false;
    }
 
+	if (strstr(info->path, ".m3u") != NULL) {
+		read_m3u(info->path);
+	} else {
+		full_path = info->path;
+		images[0] = strdup(full_path);
+		cur_disk_idx = 0;
+		cur_disk_num = full_path ? 1 : 0;
+	}
 
-   full_path = info->path;
-   images[0] = strdup(full_path);
-   cur_disk_idx = 0;
-   cur_disk_num = full_path ? 1 : 0;
-
-   strcpy(RPATH,full_path);
+   strcpy(RPATH, images[0]);
 
    log_printf("LOAD EMU\n");
 
