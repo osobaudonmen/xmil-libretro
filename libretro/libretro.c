@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdarg.h>
+#include <compat/fopen_utf8.h>
 
 #include "libretro.h"
 
@@ -471,7 +472,7 @@ static bool read_m3u(const char *file)
    char line[MAX_PATH];
    char name[MAX_PATH];
    char base_dir[MAX_PATH];
-   FILE *f = fopen(file, "r");
+   FILE *f = fopen_utf8(file, "r");
 
    if (!f)
       return false;
